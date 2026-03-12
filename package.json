@@ -22,11 +22,13 @@
   "peerDependencies": {
     "typescript": "^5"
   },
-
   "lint-staged": {
-  "src/**/*.ts": [
-    "eslint --fix",
-    "prettier --write"
-  ]
-}
+    "src/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
+  }
 }
