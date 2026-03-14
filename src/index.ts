@@ -2,6 +2,7 @@ import Fastify from "fastify";
 import { randomUUID } from "crypto";
 import { env } from "./config/env";
 import { errorHandler } from "./shared/middleware/errorHandler";
+import { clerkWebhookHandler } from "./modules/users/users.webhook";
 
 const app = Fastify({
   logger: {
@@ -24,7 +25,7 @@ app.addHook("onRequest", async (request, reply) => {
   reply.header("x-request-id", request.id);
 });
 
-app.get("/health", async () => {
+app.get("/health", async (): Promise<{ status: string; timestamp: string }> => {
   return { status: "ok", timestamp: new Date().toISOString() };
 });
 
@@ -36,5 +37,7 @@ const start = async () => {
     process.exit(1);
   }
 };
+
+app.post("/webhooks/clerk", clerkWebhookHandler);
 
 start();

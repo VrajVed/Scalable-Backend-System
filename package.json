@@ -35,10 +35,12 @@
     ]
   },
   "dependencies": {
+    "@clerk/backend": "^3.2.0",
     "drizzle-orm": "^0.45.1",
     "drizzle-zod": "^0.8.3",
     "fastify": "^5.8.2",
     "postgres": "^3.4.8",
+    "svix": "^1.88.0",
     "zod": "^4.3.6"
   }
 }

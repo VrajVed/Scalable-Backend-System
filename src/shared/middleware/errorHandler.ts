@@ -3,10 +3,12 @@ import { AppError } from "../errors";
 
 export const errorHandler = (
   error: FastifyError | AppError | Error,
-  _request: FastifyRequest,
+  request: FastifyRequest,
   reply: FastifyReply,
-) => {
-  // Known application error
+): FastifyReply => {
+  // Log every error with full details
+  request.log.error({ err: error }, error.message);
+
   if (error instanceof AppError) {
     return reply.status(error.statusCode).send({
       success: false,
@@ -15,7 +17,6 @@ export const errorHandler = (
     });
   }
 
-  // Fastify validation error
   if ("statusCode" in error && error.statusCode === 400) {
     return reply.status(400).send({
       success: false,
@@ -24,7 +25,6 @@ export const errorHandler = (
     });
   }
 
-  // Unknown error - don't leak internals
   return reply.status(500).send({
     success: false,
     code: "INTERNAL_SERVER_ERROR",
