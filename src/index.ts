@@ -4,6 +4,7 @@ import { env } from "./config/env";
 import { errorHandler } from "./shared/middleware/errorHandler";
 import { clerkWebhookHandler } from "./modules/users/users.webhook";
 import { userRoutes } from "./modules/users/interface/user.routes";
+import { rateLimiter } from "./shared/middleware/rateLimiter";
 
 const app = Fastify({
   logger: {
@@ -17,13 +18,24 @@ const app = Fastify({
   },
   // Every request gets a unique ID automatically
   genReqId: () => randomUUID(),
+  bodyLimit: 1048576,
 });
 
 app.setErrorHandler(errorHandler);
+app.addHook("preHandler", rateLimiter);
 
 // Attach request ID to every response header
 app.addHook("onRequest", async (request, reply) => {
   reply.header("x-request-id", request.id);
+});
+
+app.addHook("onSend", async (_request, reply) => {
+  reply.header("X-Content-Type-Options", "nosniff");
+  reply.header("X-Frame-Options", "DENY");
+  reply.header("X-XSS-Protection", "0");
+  reply.header("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  reply.header("Referrer-Policy", "strict-origin-when-cross-origin");
+  reply.header("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
 });
 
 app.get("/health", async (): Promise<{ status: string; timestamp: string }> => {
