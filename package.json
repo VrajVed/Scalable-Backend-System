@@ -8,6 +8,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "dev": "bun --watch src/index.ts",
+    "docker:dev": "sudo docker compose -f docker/docker-compose.yml up -d",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write src/**/*.ts",
