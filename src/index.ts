@@ -3,6 +3,7 @@ import { randomUUID } from "crypto";
 import { env } from "./config/env";
 import { errorHandler } from "./shared/middleware/errorHandler";
 import { clerkWebhookHandler } from "./modules/users/users.webhook";
+import { userRoutes } from "./modules/users/interface/user.routes";
 
 const app = Fastify({
   logger: {
@@ -28,6 +29,8 @@ app.addHook("onRequest", async (request, reply) => {
 app.get("/health", async (): Promise<{ status: string; timestamp: string }> => {
   return { status: "ok", timestamp: new Date().toISOString() };
 });
+
+app.register(userRoutes, { prefix: "/users" });
 
 const start = async () => {
   try {

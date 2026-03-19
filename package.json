@@ -9,6 +9,7 @@
     "db:studio": "drizzle-kit studio",
     "dev": "bun --watch src/index.ts",
     "docker:dev": "sudo docker compose -f docker/docker-compose.yml up -d",
+    "test:api": "bash scripts/test-api.sh",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write src/**/*.ts",
