@@ -7,6 +7,9 @@ import { userRoutes } from "./modules/users/interface/user.routes";
 import { rateLimiter } from "./shared/middleware/rateLimiter";
 import "./infrastructure/queue/workers/email.worker";
 import { sendWelcomeEmail } from "./infrastructure/queue/producers/email.producer";
+import { bullBoardAdapter } from "./infrastructure/queue/bull-board";
+import { requireAuth } from "./shared/middleware/requireAuth";
+import { requireRole } from "./shared/middleware/requireRole";
 
 const app = Fastify({
   logger: {
@@ -59,5 +62,17 @@ app.get("/test-email", async (request, reply) => {
   return reply.send({ queued: true });
 });
 app.post("/webhooks/clerk", clerkWebhookHandler);
+
+// Bull Board — admin only
+app.register(async (adminApp) => {
+  if (process.env.NODE_ENV === "production") {
+    adminApp.addHook("preHandler", requireAuth);
+    adminApp.addHook("preHandler", requireRole("admin"));
+  }
+
+  adminApp.register(bullBoardAdapter.registerPlugin(), {
+    prefix: "/admin/queues",
+  });
+});
 
 start();
