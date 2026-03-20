@@ -13,7 +13,9 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write src/**/*.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "worker": "bun src/worker.ts",
+    "worker:dev": "bun --watch src/worker.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",

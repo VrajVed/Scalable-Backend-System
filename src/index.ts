@@ -10,6 +10,10 @@ import { sendWelcomeEmail } from "./infrastructure/queue/producers/email.produce
 import { bullBoardAdapter } from "./infrastructure/queue/bull-board";
 import { requireAuth } from "./shared/middleware/requireAuth";
 import { requireRole } from "./shared/middleware/requireRole";
+import { startDLQMonitors } from "./infrastructure/queue/dlq.monitor";
+import "./infrastructure/queue/workers/email.worker";
+
+startDLQMonitors();
 
 const app = Fastify({
   logger: {
