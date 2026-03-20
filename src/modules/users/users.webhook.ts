@@ -3,6 +3,7 @@ import { Webhook } from "svix";
 import { env } from "../../config/env";
 import { db } from "../../infrastructure/database/db";
 import { users } from "../../infrastructure/database/schema/users";
+import { sendWelcomeEmail } from "../../infrastructure/queue/producers/email.producer";
 import { eq } from "drizzle-orm";
 
 type ClerkUserEvent = {
@@ -42,6 +43,12 @@ export const clerkWebhookHandler = async (
       firstName: data.first_name,
       lastName: data.last_name,
     });
+
+    // Queue welcome email
+    await sendWelcomeEmail(
+      data.email_addresses[0]?.email_address ?? "",
+      data.first_name ?? "there",
+    );
   }
 
   if (type === "user.updated") {

@@ -5,6 +5,8 @@ import { errorHandler } from "./shared/middleware/errorHandler";
 import { clerkWebhookHandler } from "./modules/users/users.webhook";
 import { userRoutes } from "./modules/users/interface/user.routes";
 import { rateLimiter } from "./shared/middleware/rateLimiter";
+import "./infrastructure/queue/workers/email.worker";
+import { sendWelcomeEmail } from "./infrastructure/queue/producers/email.producer";
 
 const app = Fastify({
   logger: {
@@ -52,7 +54,10 @@ const start = async () => {
     process.exit(1);
   }
 };
-
+app.get("/test-email", async (request, reply) => {
+  await sendWelcomeEmail("test@example.com", "Test User");
+  return reply.send({ queued: true });
+});
 app.post("/webhooks/clerk", clerkWebhookHandler);
 
 start();
